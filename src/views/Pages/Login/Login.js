@@ -3,6 +3,45 @@ import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 
 class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { username: '', password: '', loader: false, login: 'true' };
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+  handleChange(event) {
+    if (event.target.dataset.name == 'username') {
+      this.setState({ username: event.target.value });
+    }
+
+    if (event.target.dataset.name == 'password') {
+      this.setState({ password: event.target.value });
+    }
+
+  }
+
+  handleSubmit(event) {
+    /*this.setState({ loader: !this.state.loader })
+    this.setState({ login: !this.state.login })
+    fetch(Endpoint.user_login, {
+      method: 'POST',
+      headers: Endpoint.default_headers,
+      body: JSON.stringify(this.state)
+    }).then(response => response.json()).then(res => this.onSetResult(res));*/
+    event.preventDefault();
+  }
+
+  onSetResult = (result) => {
+    if (typeof result.response._token != 'undefined') {
+      localStorage.setItem('isAuthenticated', result.response._token);
+      window.location = "/Dashboard";
+    }
+    else {
+      this.setState({ loader: false, login: true })
+      alert('Invalid!');
+      document.getElementById("login-form").reset();
+    }
+  }
   render() {
     return (
       <div className="app flex-row align-items-center">
@@ -42,7 +81,7 @@ class Login extends Component {
                     </Form>
                   </CardBody>
                 </Card>
-                <Card className="text-white bg-primary py-5 d-md-down-none" style={{ width: '44%' }}>
+                {/*<Card className="text-white bg-primary py-5 d-md-down-none" style={{ width: '44%' }}>
                   <CardBody className="text-center">
                     <div>
                       <h2>Sign up</h2>
@@ -53,7 +92,7 @@ class Login extends Component {
                       </Link>
                     </div>
                   </CardBody>
-                </Card>
+    </Card>*/}
               </CardGroup>
             </Col>
           </Row>
