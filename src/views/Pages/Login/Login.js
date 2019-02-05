@@ -22,11 +22,15 @@ class Login extends Component {
   }
 
   handleChange(event) {
+    //set the state on user input using onChange event
+    this.setState({ [event.target.name]: event.target.value })
+
+    //console logs for testing --------
     //console.log(event);
     //console.log(event.target.name);
-    //console.log(event.target.value);
-    this.setState({ [event.target.name]: event.target.value })
-    //legacy code used to set the state
+    //console.log(event.target.value);    
+
+    //legacy code used to set the state -------------------
     /*if (event.target.dataset.name == 'username') {
       this.setState({ username: event.target.value });
     }
@@ -37,12 +41,22 @@ class Login extends Component {
   }
 
   handleSubmit(event) {
+    /******
+     * we are preventing the form from submitting with it's default submit event
+     * if the user does not put any input into the fields, we call toggle() and prompt the
+     * user for correct input
+     * When the backend is hooked up we would fetch our data in this function
+     * 
+     */
     event.preventDefault();
-    const data = this.state;
-    console.log('final data is: ', data);
+    //testing code to see if we capture the data
+    //const data = this.state;
+    //console.log('final data is: ', data);
+    //This is a good place to begin our get request to the database
     if (this.state.username !== '' && this.state.password !== '') {
+      this.toggleTwo()
       console.log(`
-      --submitting--
+      --submitting to database--
       username: ${this.state.username}
       password: ${this.state.password}
       `)
@@ -56,13 +70,22 @@ class Login extends Component {
       }).then(response => response.json()).then(res => this.onSetResult(res));
       end of fetch **************/
     } else {
+      /**
+       * we bypassed fetching the data from the backend because the user input
+       * was incorrect
+       * we are prompting the user for correct input
+       *  */
+      this.toggle()
       console.log('Form Invalid - Display Error Message');
     }
   }
 
   toggle() {
-    //console.log('username: ', this.state.username);
-    //console.log('password:  ', this.state.password);
+    /****
+     * if the user does not input any characters into the username and
+     * password field, prompt him with modal to use more characters
+     * 
+     */
     if (this.state.username === '' && this.state.password === '') {
       this.setState({
         modal: !this.state.modal
@@ -70,16 +93,24 @@ class Login extends Component {
     }
   }
   toggleTwo() {
-    //console.log('username: ', this.state.username);
-    //console.log('password:  ', this.state.password);
+    /***
+     * Call this modal if the login api call is succesfull
+     * A third modal could be created to inform the user the login is 
+     * was unsuccessfull (ie., toggleThree())
+     * 
+     */
     this.setState({
       modalTwo: !this.state.modalTwo
-      });
-      console.log(this.state.modalTwo)    
+    });
+    console.log(this.state.modalTwo)
   }
 
 
-  /***** unused legacy code method
+  /***** unused legacy code method to route user to dashboard on successful login
+   * this function is a good place to put our call to modals informing
+   * the user of a successful or unsuccessful login
+   * 
+   * 
   onSetResult = (result) => {
     if (typeof result.response._token != 'undefined') {
       localStorage.setItem('isAuthenticated', result.response._token);
@@ -123,7 +154,7 @@ class Login extends Component {
                       </InputGroup>
                       <Row>
                         <Col xs="6">
-                          <Button color="primary" className="px-4" onClick={this.toggle}>Login</Button>
+                          <Button color="primary" className="px-4" >Login</Button>
                         </Col>
                         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
                           <ModalHeader toggle={this.toggle}>Login Information</ModalHeader>
@@ -131,17 +162,17 @@ class Login extends Component {
                             username and password fields require at least one character.
                           </ModalBody>
                           <ModalFooter>
-                            <Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}
+                            {/*<Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}*/}
                             <Button color="secondary" onClick={this.toggle}>Cancel</Button>
                           </ModalFooter>
                         </Modal>
                         <Modal isOpen={this.state.modalTwo} toggle={this.toggleTwo} className={this.props.className}>
                           <ModalHeader toggle={this.toggleTwo}>Login Information</ModalHeader>
                           <ModalBody>
-                            successful login
+                            We are getting the user login data. we will inform him of success/failure with a modal 
                           </ModalBody>
                           <ModalFooter>
-                            <Button color="primary" onClick={this.toggleTwo}>Do Something</Button>{' '}
+                            {/*<Button color="primary" onClick={this.toggleTwo}>Do Something</Button>{' '}*/}
                             <Button color="secondary" onClick={this.toggleTwo}>Cancel</Button>
                           </ModalFooter>
                         </Modal>
